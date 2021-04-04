@@ -1,0 +1,10 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 1684-0B0D
+
+ Directory of C:\books\cpsc 471 - comp communication\assignment\assignment1\upload
+
+03/30/2021  12:17 PM    <DIR>          .
+03/30/2021  12:17 PM    <DIR>          ..
+10/29/2014  09:57 PM                25 file.txt
+               1 File(s)             25 bytes
+               2 Dir(s)  786,820,595,712 bytes free
