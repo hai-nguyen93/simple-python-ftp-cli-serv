@@ -1,5 +1,5 @@
 from socket import *
-import subprocess
+import sys
 import os
 
 
@@ -120,13 +120,24 @@ def recv_byte(_socket):
 
 
 # ---------main--------
-server_name = 'localhost'
-server_port = 6969
+if len(sys.argv) != 3:
+    print('Usage: cli.py <host> <port number>')
+    exit()
+
+server_name = sys.argv[1]
+server_port = int(sys.argv[2])
+print('Server: ', server_name)
+print('Port number: ', server_port)
 transfer_port = server_port + 69
 client_socket = socket(AF_INET, SOCK_STREAM)
-client_socket.connect((server_name, server_port))
+try:
+    client_socket.connect((server_name, server_port))
+except error:
+    print('Cannot connect to server.')
+    print('Closing program.')
+    exit()
 
-print('Welcome to FTP client:')
+print('\nWelcome to FTP client:')
 show_help()
 
 while 1:

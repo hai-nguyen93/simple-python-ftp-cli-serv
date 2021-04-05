@@ -1,11 +1,12 @@
 from socket import *
 import subprocess
 import os
+import sys
 
 
-def test_serv():
+def test_serv(port_num):
     server_socket = socket(AF_INET, SOCK_STREAM)
-    port = 6969
+    port = port_num
     transfer_port = port + 69
     server_socket.bind(('', port))
 
@@ -17,7 +18,7 @@ def test_serv():
         tokens = tmp_buffer.decode().split()
 
         if tmp_buffer:
-            print('Client\'s command: ', tmp_buffer)
+            print('Client\'s command: ', tmp_buffer.decode())
 
         if tokens[0].lower() == 'ls':
             ls_serv(connection_socket, tokens)
@@ -137,9 +138,9 @@ def send_byte(_socket, data):
 
 
 # -------------- main-------------
-#subprocess.run(['dir', 'upload', '/n', '>', 'result.txt'], shell=True)
-#f = open('result.txt')
-#print(f.read())
-#f.close()
-
-test_serv()
+if len(sys.argv) != 2:
+    print('Usage: serv.py <port number>')
+    exit()
+port_number = int(sys.argv[1])
+print('Port number: ', port_number)
+test_serv(port_number)
