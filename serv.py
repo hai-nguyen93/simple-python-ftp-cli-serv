@@ -51,7 +51,7 @@ def ls_serv(_socket, cmd):
 
 def put_serv(_socket, filename, file_port):
     # prepare transfer port
-    file = 'upload/' + filename
+    file = 'upload/' + os.path.basename(filename)
     file_socket = socket(AF_INET, SOCK_STREAM)
     file_socket.bind(('', file_port))
     file_socket.listen(1)
