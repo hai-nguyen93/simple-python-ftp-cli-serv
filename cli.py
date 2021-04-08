@@ -7,7 +7,7 @@ def show_help():
     print('------------------------------')
     print('commands help:')
     print('ls : list files on the server')
-    print('push <filename> : upload <filename> to the server')
+    print('put <filename> : upload <filename> to the server')
     print('get <filename> : download <filename> from the server')
     print('help : show help')
     print('quit : disconnect from the server and quit the application')
