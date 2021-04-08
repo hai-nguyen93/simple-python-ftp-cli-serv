@@ -5,10 +5,16 @@ import sys
 
 
 def test_serv(port_num):
-    server_socket = socket(AF_INET, SOCK_STREAM)
     port = port_num
     transfer_port = port + 69
-    server_socket.bind(('', port))
+    server_socket = None
+    try:
+        server_socket = socket(AF_INET, SOCK_STREAM)
+        server_socket.bind(('', port))
+    except (ValueError, Exception):
+        print('FAILURE: cannot open socket.')
+        print('Closing server.')
+        exit()
 
     server_socket.listen(1)
     print('The server is ready to receive.')
@@ -18,16 +24,25 @@ def test_serv(port_num):
         tokens = tmp_buffer.decode().split()
 
         if tmp_buffer:
-            print('Client\'s command: ', tmp_buffer.decode())
+            print('\nClient\'s command: ', tmp_buffer.decode())
 
         if tokens[0].lower() == 'ls':
-            ls_serv(connection_socket, tokens)
+            try:
+                ls_serv(connection_socket, tokens)
+            except (ValueError, Exception):
+                print('FAILURE: ls')
 
         if tokens[0].lower() == 'put':
-            put_serv(connection_socket, tokens[1], transfer_port)
+            try:
+                put_serv(connection_socket, tokens[1], transfer_port)
+            except (ValueError, Exception):
+                print('FAILURE: put')
 
         if tokens[0].lower() == 'get':
-            get_serv(connection_socket, tokens[1], transfer_port)
+            try:
+                get_serv(connection_socket, tokens[1], transfer_port)
+            except (ValueError, Exception):
+                print('FAILURE: get')
 
         if tokens[0].lower() == 'quit':
             break
@@ -53,8 +68,14 @@ def put_serv(_socket, filename, file_port):
     # prepare transfer port
     file = 'upload/' + os.path.basename(filename)
     file_socket = socket(AF_INET, SOCK_STREAM)
-    file_socket.bind(('', file_port))
+    try:
+        file_socket.bind(('', file_port))
+    except (ValueError, Exception):
+        send_byte(_socket, b'500')  # Server error
+        print('FAILURE: put - cannot open transfer port')
+        return
     file_socket.listen(1)
+    send_byte(_socket, b'200')  # tell client that the server is ready
     connection_socket, addr = file_socket.accept()
 
     # receive file
@@ -84,8 +105,14 @@ def get_serv(_socket, filename, file_port):
     # prepare file transfer port
     send_byte(_socket, b'200')  # file found, prepare to transfer
     file_socket = socket(AF_INET, SOCK_STREAM)
-    file_socket.bind(('', file_port))
+    try:
+        file_socket.bind(('', file_port))
+    except (ValueError, Exception):
+        send_byte(_socket, b'500')  # Server error
+        print('FAILURE: get - cannot open transfer port')
+        return
     file_socket.listen(1)
+    send_byte(_socket, b'200')  # tell client that the server is ready
     connection_socket, addr = file_socket.accept()
 
     # send file
@@ -141,6 +168,18 @@ def send_byte(_socket, data):
 if len(sys.argv) != 2:
     print('Usage: serv.py <port number>')
     exit()
-port_number = int(sys.argv[1])
+port_number = 0
+try:
+    port_number = int(sys.argv[1])
+except (ValueError, Exception):
+    print('Failure: Invalid port number.')
+    exit()
+if port_number < 0:
+    print('Failure: Negative port number.')
+    exit()
 print('Port number: ', port_number)
+
+# create upload folder if not exist
+if not os.path.exists('upload'):
+    os.mkdir('upload')
 test_serv(port_number)

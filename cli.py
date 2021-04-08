@@ -33,6 +33,13 @@ def put_cli(_socket, filename, file_port):
         print('Error: File not found!')
         return
 
+    # get server response code on opening transfer port
+    code, _ = recv_byte(_socket)
+    if code.decode() == '500':
+        print('FAILURE: error in server')
+        return
+
+    # code == 200: server is ready
     # connect to new port
     file_socket = socket(AF_INET, SOCK_STREAM)
     file_socket.connect((_socket.getsockname()[0], file_port))
@@ -51,13 +58,21 @@ def put_cli(_socket, filename, file_port):
 def get_cli(_socket, filename, file_port):
     file = 'download/' + filename
 
-    # check server response code
+    # check server response code on file existence
     code, _ = recv_byte(_socket)
     if code.decode() == '404':
         print('Error: file {} not found on server.'.format(filename))
         return
 
     # code == 200, found file to download
+
+    # get server response code on opening transfer port
+    code, _ = recv_byte(_socket)
+    if code.decode() == '500':
+        print('FAILURE: error in server')
+        return
+
+    # code == 200: server is ready
     # connect to new port
     file_socket = socket(AF_INET, SOCK_STREAM)
     file_socket.connect((_socket.getsockname()[0], file_port))
@@ -124,45 +139,74 @@ if len(sys.argv) != 3:
     print('Usage: cli.py <host> <port number>')
     exit()
 
+# create download folder if not exists
+if not os.path.exists('download'):
+    os.mkdir('download')
+
+# set up socket, port
 server_name = sys.argv[1]
-server_port = int(sys.argv[2])
-print('Server: ', server_name)
-print('Port number: ', server_port)
-transfer_port = server_port + 69
-client_socket = socket(AF_INET, SOCK_STREAM)
+port = 0
 try:
-    client_socket.connect((server_name, server_port))
-except error:
+    port = int(sys.argv[2])
+except (ValueError, Exception):
+    print('Failure: Invalid port number.')
+    exit()
+if port < 0:
+    print('Failure: Negative port number.')
+    exit()
+print('Server: ', server_name)
+print('Port number: ', port)
+transfer_port = port + 69  # port for transferring file
+
+# connect to server
+client_socket = None
+try:
+    client_socket = socket(AF_INET, SOCK_STREAM)
+    client_socket.connect((server_name, port))
+except (ValueError, Exception):
     print('Cannot connect to server.')
-    print('Closing program.')
+    print('Closing client.')
     exit()
 
+# client is ready to get input
 print('\nWelcome to FTP client:')
 show_help()
 
 while 1:
-    cmd = input('ftp> ')
+    cmd = input('\nftp> ')
     tokens = cmd.split()
     # print(cmd)
 
     if tokens[0] == 'ls':
-        send_cmd(client_socket, cmd)
-        ls_cli(client_socket, tokens)
+        try:
+            send_cmd(client_socket, cmd)
+            ls_cli(client_socket, tokens)
+        except (ValueError, Exception):
+            print('FAILURE: ls')
 
     if tokens[0] == 'put':
         if not os.path.exists(tokens[1]):
             print('Error: file {} not found'.format(tokens[1]))
             continue
 
-        send_cmd(client_socket, cmd)
-        put_cli(client_socket, tokens[1], transfer_port)
+        try:
+            send_cmd(client_socket, cmd)
+            put_cli(client_socket, tokens[1], transfer_port)
+        except (ValueError, Exception):
+            print('FAILURE: put')
 
     if tokens[0] == 'get':
-        send_cmd(client_socket, cmd)
-        get_cli(client_socket, tokens[1], transfer_port)
+        try:
+            send_cmd(client_socket, cmd)
+            get_cli(client_socket, tokens[1], transfer_port)
+        except (ValueError, Exception):
+            print('FAILURE: get')
 
     if tokens[0] == 'quit':
-        send_cmd(client_socket, cmd)
+        try:
+            send_cmd(client_socket, cmd)
+        except (ValueError, Exception):
+            print('FAILURE: quit')
         break
 
     if tokens[0] == 'help':
