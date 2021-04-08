@@ -184,7 +184,7 @@ while 1:
         except (ValueError, Exception):
             print('FAILURE: ls')
 
-    if tokens[0] == 'put':
+    elif tokens[0] == 'put':
         if not os.path.exists(tokens[1]):
             print('Error: file {} not found'.format(tokens[1]))
             continue
@@ -195,21 +195,24 @@ while 1:
         except (ValueError, Exception):
             print('FAILURE: put')
 
-    if tokens[0] == 'get':
+    elif tokens[0] == 'get':
         try:
             send_cmd(client_socket, cmd)
             get_cli(client_socket, tokens[1], transfer_port)
         except (ValueError, Exception):
             print('FAILURE: get')
 
-    if tokens[0] == 'quit':
+    elif tokens[0] == 'quit':
         try:
             send_cmd(client_socket, cmd)
         except (ValueError, Exception):
             print('FAILURE: quit')
         break
 
-    if tokens[0] == 'help':
+    elif tokens[0] == 'help':
         show_help()
+
+    else:
+        print('Invalid command.')
 
 client_socket.close()
