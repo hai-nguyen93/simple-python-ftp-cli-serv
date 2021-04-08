@@ -1,6 +1,7 @@
 Members:
-Hai Nguyen - hai_nguyen@csu.fullerton.edu
-Gordon Dan - gdan189@csu.fullerton.edu
+Hai Nguyen   -  hai_nguyen@csu.fullerton.edu
+Gordon Dan   -  gdan189@csu.fullerton.edu
+Stanley Shi  -  stanleyshi@csu.fullerton.edu
 
 ----------------------------------------------
 Assignment 1 - FTP client/server:
