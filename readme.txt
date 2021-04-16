@@ -3,6 +3,7 @@ Tyler Bloom  -  tylerbloom9787@gmail.com
 Hai Nguyen   -  hai_nguyen@csu.fullerton.edu
 Gordon Dan   -  gdan189@csu.fullerton.edu
 Stanley Shi  -  stanleyshi@csu.fullerton.edu
+Katelyn Choi -  katelyn_choi@csu.fullerton.edu
 
 ----------------------------------------------
 CPSC471 - Assignment 1 - FTP client/server:
