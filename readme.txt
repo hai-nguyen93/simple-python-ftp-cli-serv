@@ -5,7 +5,7 @@ Gordon Dan   -  gdan189@csu.fullerton.edu
 Stanley Shi  -  stanleyshi@csu.fullerton.edu
 
 ----------------------------------------------
-Assignment 1 - FTP client/server:
+CPSC471 - Assignment 1 - FTP client/server:
 - Operating system: Windows 10 
 - Language: python 3.7
 
