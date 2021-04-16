@@ -1,5 +1,5 @@
 Members:
-Tyler Bloom - tylerbloom@9787@gmail.com
+Tyler Bloom  -  tylerbloom@9787@gmail.com
 Hai Nguyen   -  hai_nguyen@csu.fullerton.edu
 Gordon Dan   -  gdan189@csu.fullerton.edu
 Stanley Shi  -  stanleyshi@csu.fullerton.edu
